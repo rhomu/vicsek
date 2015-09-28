@@ -7,18 +7,21 @@
 ################################################################################
 
 import pygame, copy, random
-from math import pi, cos, sin, atan, fabs
+from math import pi, cos, sin, atan2, fabs
 
 # some constants
 L = 512
-N = 300
+N = 250
 r = 10
-n = 0.3
+n = 0.4
 v = 3.
 fps = 50
 
 def dist(p1, p2):
   return fabs(p1[0]-p2[0]) + fabs(p1[1]-p2[1])
+
+def sign(v):
+  return v/abs(v)
 
 class bird:
   """Flies.
@@ -30,11 +33,12 @@ class bird:
     self.phi   = phi
     self.speed = speed
     self.color = [ 0, 0, 0 ]
-    self.size  = 10
+    self.size  = 7
 
   def draw_head(self, screen):
     # head
-    pygame.draw.circle(screen, self.color, [ int(i) for i in self.pos ], 2)
+    #pygame.draw.circle(screen, self.color, [ int(i) for i in self.pos ], .5)
+    pass
 
   def draw_tail(self, screen):
     # tail (decreasing gradient)
@@ -64,7 +68,7 @@ class flock:
     self.r = r
     self.n = n
     # create birds
-    self.birds = [ bird([ random.random()*L, random.random()*L ], 16*pi*(1-2*random.random()), v) for i in range(self.N) ]
+    self.birds = [ bird([ random.random()*L, random.random()*L ], 2*pi*random.random(), v) for i in range(self.N) ]
 
   def draw(self, screen):
     # just draw those birds
@@ -75,15 +79,17 @@ class flock:
   def move(self):
     # update the angles
     for b in self.birds:
-      phi_tot = 0.
+      sin_tot = 0.
+      cos_tot = 0.
       counter = 0
       for bb in self.birds:
         if dist(b.pos, bb.pos)<self.r:
-          phi_tot += bb.phi
+          sin_tot += sin(bb.phi)
+          cos_tot += cos(bb.phi)
           counter += 1
       # update
       if counter>0:
-        b.phi = atan(sin(phi_tot/counter)/cos(phi_tot/counter)) + self.n/2.*(1-2.*random.random())
+        b.phi = atan2(sin_tot, cos_tot) + self.n/2.*(1-2.*random.random())
 
     # move them
     for b in self.birds:
@@ -91,7 +97,7 @@ class flock:
 
 class game:
   """Fly, baby, fly.
-    
+
     """
   def __init__(self):
     pygame.init()
@@ -100,6 +106,7 @@ class game:
     self.screen = pygame.display.set_mode(self.size)
     self.bkg_color = (255, 255, 255)
     self.flock = flock(N, r, n)
+    print "Press Esc to quit."
 
   def run(self):
     running = True
