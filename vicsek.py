@@ -10,13 +10,6 @@ import pygame, copy, random
 from math import pi, cos, sin, atan2, fabs
 
 # some constants
-L = 512
-N = 250
-r = 10
-n = 0.4
-v = 3.
-fps = 50
-
 def dist(p1, p2):
   return fabs(p1[0]-p2[0]) + fabs(p1[1]-p2[1])
 
@@ -27,13 +20,14 @@ class bird:
   """Flies.
     
     """
-  def __init__(self, pos, phi, speed):
+  def __init__(self, app, pos, phi, speed):
     self.pos  = pos
     self.tail  = [ copy.deepcopy(self.pos) ]
     self.phi   = phi
     self.speed = speed
     self.color = [ 0, 0, 0 ]
     self.size  = 7
+    self.app = app
 
   def draw_head(self, screen):
     # head
@@ -45,14 +39,17 @@ class bird:
     c = 1.
     l = len(self.tail)
     for i in range(l-1):
-      if dist(self.tail[i], self.tail[i+1])>=L/2.: continue
+      if ( abs( self.tail[i][0] - self.tail[i+1][0] )>=app.width/2. or 
+           abs( self.tail[i][1] - self.tail[i+1][1] )>=app.height/2. 
+         ):
+        continue
       color = [ 255 - float(l-1-i)/float(l-1)*(255-c) for c in self.color ] 
       pygame.draw.line(screen, color, self.tail[i], self.tail[i+1])
 
   def move(self):
     self.pos = map(sum, zip(self.pos, [ self.speed*cos(self.phi), self.speed*sin(self.phi) ]))
     # periodic boundary conditions
-    self.pos = [ i%L for i in self.pos ] 
+    self.pos = [ self.pos[0]%app.width, self.pos[1]%app.height ] 
        
     # grow tail
     self.tail.insert(0, copy.deepcopy( self.pos ))
@@ -63,12 +60,28 @@ class flock:
   """Many of those things
 
     """
-  def __init__(self, N, r, n):
+  def __init__(self, app, N, r, n, speed):
     self.N = N
     self.r = r
     self.n = n
+    self.app = app
+    self.speed = speed
     # create birds
-    self.birds = [ bird([ random.random()*L, random.random()*L ], 2*pi*random.random(), v) for i in range(self.N) ]
+    self.birds = [ bird(self.app, [ random.random()*app.width, random.random()*app.height ], 2*pi*random.random(), self.speed) for i in range(self.N) ]
+
+  def add_bird(self):
+    self.birds.append( bird(self.app, [ random.random()*app.width, random.random()*app.height ], 2*pi*random.random(), self.speed) )
+    self.N = self.N+1
+
+  def kill_bird(self):
+    if self.birds != []:
+      self.birds.pop( int( random.random()*len(self.birds) ) )
+    self.N = self.N-1
+
+  def set_temp(self, n):
+    self.n = n
+    for b in self.birds:
+      b.n = n
 
   def draw(self, screen):
     # just draw those birds
@@ -102,10 +115,22 @@ class game:
   def __init__(self):
     pygame.init()
     self.clock = pygame.time.Clock()
-    self.size = self.width, self.height = L, L
-    self.screen = pygame.display.set_mode(self.size)
+    self.width, self.height = 512, 512
+    self.screen = pygame.display.set_mode( (self.width, self.height), pygame.HWSURFACE | pygame.DOUBLEBUF | pygame.RESIZABLE)
     self.bkg_color = (255, 255, 255)
-    self.flock = flock(N, r, n)
+    self.N = 250
+    self.r = 10
+    self.n = 0.5
+    self.v = 3.
+    self.fps = 30
+
+    self.flock = flock(self, self.N, self.r, self.n, self.v)
+
+    print "Controls:"
+    print "  (w) add 10 birds"
+    print "  (a) delete 10 birds"
+    print "  (e) heat"
+    print "  (s) cool"
     print "Press Esc to quit."
 
   def run(self):
@@ -114,16 +139,34 @@ class game:
 
     while running:
       # ultimate time control
-      self.clock.tick(fps)
+      self.clock.tick(self.fps)
 
-      # keyboard
+      # events handler
       for event in pygame.event.get():
         if event.type == pygame.QUIT:
           running = False
+        # keyboard
         if event.type == pygame.KEYDOWN:
+          # controls
+          if event.key == pygame.K_w:
+            for i in range(10):
+              self.flock.add_bird()
+          elif event.key == pygame.K_a:
+            for i in range(10):
+              self.flock.kill_bird()
+          elif event.key == pygame.K_e:
+            self.n = ( self.n + 0.1 ) % (4*pi)
+            self.flock.set_temp(self.n)
+          elif event.key == pygame.K_s:
+            self.n = max( self.n - 0.1, 0. ) % (4*pi)
+            self.flock.set_temp(self.n)
           # esc
           if event.key == pygame.K_ESCAPE:
             running = False
+        # resize window
+        if event.type == pygame.VIDEORESIZE:
+          self.size = self.width, self.height = event.dict['size']
+          self.screen = pygame.display.set_mode(self.size, pygame.HWSURFACE | pygame.DOUBLEBUF | pygame.RESIZABLE)
  
       # moving
       self.flock.move()
