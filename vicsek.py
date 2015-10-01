@@ -29,11 +29,6 @@ class bird:
     self.size  = 7
     self.app = app
 
-  def draw_head(self, screen):
-    # head
-    #pygame.draw.circle(screen, self.color, [ int(i) for i in self.pos ], .5)
-    pass
-
   def draw_tail(self, screen):
     # tail (decreasing gradient)
     c = 1.
@@ -66,8 +61,13 @@ class flock:
     self.n = n
     self.app = app
     self.speed = speed
+    self.draw_circles = False
     # create birds
-    self.birds = [ bird(self.app, [ random.random()*app.width, random.random()*app.height ], 2*pi*random.random(), self.speed) for i in range(self.N) ]
+    self.birds = [ bird(self.app, 
+                        [ random.random()*app.width, random.random()*app.height ], 
+                        2*pi*random.random(), 
+                        self.speed
+                       ) for i in range(self.N) ]
 
   def add_bird(self):
     self.birds.append( bird(self.app, [ random.random()*app.width, random.random()*app.height ], 2*pi*random.random(), self.speed) )
@@ -87,7 +87,9 @@ class flock:
     # just draw those birds
     for b in self.birds:
       b.draw_tail(screen)
-      b.draw_head(screen)
+      # draw circle of radius r around the bird
+      if self.draw_circles:
+        pygame.draw.circle(screen, b.color, [ int(i) for i in b.pos ], self.r, 1)
 
   def move(self):
     # update the angles
@@ -131,6 +133,7 @@ class game:
     print "  (a) delete 10 birds"
     print "  (e) heat"
     print "  (s) cool"
+    print "  (p) toggle drawing interaction circles"
     print "Press Esc to quit."
 
   def run(self):
@@ -160,6 +163,8 @@ class game:
           elif event.key == pygame.K_s:
             self.n = max( self.n - 0.1, 0. ) % (4*pi)
             self.flock.set_temp(self.n)
+          elif event.key == pygame.K_p:
+            self.flock.draw_circles = not self.flock.draw_circles
           # esc
           if event.key == pygame.K_ESCAPE:
             running = False
