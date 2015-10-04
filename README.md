@@ -15,9 +15,8 @@ name dot surname at gmail dot com
 
 Screeshots
 ----------
-***
 ![screenshot1](screenshot1.jpeg)
-***
+---
 ![screenshot2](screenshot2.jpeg)
 ***
 ![screenshot3](screenshot3.jpeg)
