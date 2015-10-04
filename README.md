@@ -10,6 +10,7 @@ The program if fairly basic, but you can
 Credits
 -------
 Copyright (c) 2014 Romain Mueller
+
 name dot surname at gmail dot com
 
 
