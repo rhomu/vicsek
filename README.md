@@ -2,7 +2,7 @@ Small graphical implementation of the Vicsek model using pygame.
 
 Features
 --------
-The program if fairly basic, but you can
+The program is fairly basic, but you can:
 - Add and delete birds
 - Change the temperature
 - Enjoy your non-equilibrium phase-transition at home
