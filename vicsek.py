@@ -9,7 +9,7 @@
 import pygame, copy, random, time, datetime
 from math import pi, cos, sin, atan2, fabs, floor, ceil, sqrt
 
-# wrapping distance
+# distance
 def dist(p1, p2):
   return sqrt(fabs(p1[0]-p2[0])**2 + fabs(p1[1]-p2[1])**2)
 
