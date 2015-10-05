@@ -5,6 +5,7 @@ Features
 The program is fairly basic, but you can:
 - Add and delete birds
 - Change the temperature
+- Drain your battery
 - Enjoy your non-equilibrium phase-transition at home
 
 Credits
