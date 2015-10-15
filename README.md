@@ -15,9 +15,7 @@ This program relies on pygame. Once it is installed simply run
 
 Credits
 -------
-Copyright (c) 2015 Romain Mueller
-
-name dot surname at gmail dot com
+Copyright (c) 2015 Romain Mueller, name dot surname at gmail dot com
 
 
 Screeshots
