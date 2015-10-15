@@ -52,9 +52,9 @@ class bucket_grid:
     return neighbours
 
 class bird:
-  """Flies.
-    
-    """
+  """
+  Flies.  
+  """
   def __init__(self, app, pos, phi, speed):
     self.pos  = pos
     self.tail  = [ copy.deepcopy(self.pos) ]
@@ -65,8 +65,9 @@ class bird:
     self.app = app
 
   def __getitem__(self, index):
-    """Return position
-      """
+    """
+    Return position
+    """
     return self.pos[index]
 
   def draw_tail(self, screen):
@@ -93,9 +94,9 @@ class bird:
       self.tail.pop()
 
 class flock:
-  """Many of those things
-
-    """
+  """
+  Many of those things together.
+  """
   def __init__(self, app, N, r, n, speed):
     self.N = N
     self.r = r
@@ -154,9 +155,9 @@ class flock:
       b.move()
 
 class game:
-  """Fly, baby, fly.
-
-    """
+  """
+  Fly, baby, fly.
+  """
   def __init__(self):
     pygame.init()
     self.clock = pygame.time.Clock()
@@ -221,8 +222,8 @@ class game:
             running = False
         # resize window
         if event.type == pygame.VIDEORESIZE:
-          self.size = self.width, self.height = event.dict['size']
-          self.screen = pygame.display.set_mode(self.size, pygame.HWSURFACE | pygame.DOUBLEBUF | pygame.RESIZABLE)
+          self.width, self.height = event.dict['size']
+          self.screen = pygame.display.set_mode( (self.width, self.height), pygame.HWSURFACE | pygame.DOUBLEBUF | pygame.RESIZABLE)
  
       # moving
       self.flock.move()
@@ -232,10 +233,10 @@ class game:
       self.flock.draw(self.screen)
       pygame.display.flip()
 
-
 def test_bucket():
-  """Small test function of the bucket grid
-    """
+  """
+  Small test function of the bucket grid
+  """
   import matplotlib.pyplot as plt
   points = [ ( random.random()*512, random.random()*512 ) for i in range(400) ]
   bnn = bucket_grid(points, 512, 512, 10, 10)
