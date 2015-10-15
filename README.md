@@ -8,9 +8,15 @@ The program is fairly basic, but you can:
 - Drain your battery
 - Enjoy your non-equilibrium phase-transition at home
 
+Usage
+-----
+This program relies on pygame. Once it is installed simply run
+
+`python vicsek.py`
+
 Credits
 -------
-Copyright (c) 2014 Romain Mueller
+Copyright (c) 2015 Romain Mueller
 
 name dot surname at gmail dot com
 
