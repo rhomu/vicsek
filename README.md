@@ -11,7 +11,6 @@ The program is fairly basic, but you can:
 Usage
 -----
 This program relies on pygame. Once it is installed simply run
-
 `python vicsek.py`
 
 Credits
